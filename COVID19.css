@@ -3,18 +3,22 @@
  padding: 0;
  margin: 0;
 }
-
+html{
+ font-size: 10px;
+ scroll-behavior: smooth;
+}
 .main{
  display: flex;
  justify-content: center;
  flex-direction: column;
  align-items: center;
 }
-
-html{
- font-size: 10px;
- scroll-behavior: smooth;
+.title{
+ display: flex;
+ justify-content: center;
+ padding: 10px;
 }
+
 button{
  margin: 0.2rem;
  padding: 2px;
@@ -27,4 +31,13 @@ button{
  justify-content: space-between;
  display: flex;
  flex-wrap: wrap;
+}
+
+#myChart{
+ width:100% !important;
+ height:100% !important;
+}
+.lastestDataBtns{
+ margin: 18px;
+ padding: 15px;
 }

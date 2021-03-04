@@ -49,6 +49,7 @@ async function getCountries(){ //fetches countries names and regions and code an
   });
   console.log('countries array:',countries);
   diplayData();
+  displayCharts();
  }
  catch(error){console.log('Could not fetch Countries data');}
 }//getCountries
@@ -71,11 +72,29 @@ function handleError(error){
 
 function diplayData(){
  console.log('displayData');
- const tilte= document.querySelector('.tilte');
+ const title= document.querySelector('.title');
  const main = document.querySelector('.main');
  const chartArea = document.createElement('div');
- tilte.insertAdjacentElement('afterend',chartArea);
+ title.insertAdjacentElement('afterend',chartArea);
  chartArea.classList.add('chartArea');
+//latest data statuses and continents
+let lastestDataBtns =`
+<div class="lastestDataBtns">
+ <div class="statuses">
+  <button id="Confirmed">Confirmed</button>
+  <button id="Deaths">Deaths</button>
+  <button id="Recovered">Recovered</button>
+  <button id="Critical">Critical</button>
+ </div>
+ <div class="continents">
+  <button id="Asia">Asia</button>
+  <button id="Europe">Europe</button>
+  <button id="Africa">Africa</button>
+  <button id="Americas">Americas</button>
+  <button id="World">World</button>
+ </div>
+</div>`;
+main.insertAdjacentHTML('beforeend',lastestDataBtns);
 
  const btnsDiv = document.querySelector('.countriesBtnsDiv');
  for(let i=0; i< countries.length; i++){
@@ -84,5 +103,52 @@ function diplayData(){
   btnsDiv.insertAdjacentElement('afterbegin',cntryBtn);
  }
 
-    
+ const canvas = document.createElement('canvas');
+ canvas.id = 'myChart';
+ chartArea.insertAdjacentElement('afterbegin',canvas);
+
+ btnsDiv.addEventListener('click', (e)=>{
+  console.log(e.target.textContent);
+  let cntryName = e.target.textContent
+ });
+}//diplayData
+
+function displayCharts(){
+ let myChart = document.getElementById('myChart').getContext('2d');
+ let covidChart = new Chart(myChart, {
+   type: 'line', //type of charts
+   data:{
+    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+            label: '# of Votes',
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+   },
+   options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+  });
 }
