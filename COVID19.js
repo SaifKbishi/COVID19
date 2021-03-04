@@ -1,7 +1,9 @@
 console.log('working COVID19');
 
 const countries = [];
-const countries_info =[];
+//const countries_info =[];
+const covid_info =[];
+const continents =[];
 getCountries();
 getCountriesCOVID('countries');
 
@@ -25,9 +27,9 @@ async function getCountriesCOVID(land){ //gets COVID info per country or contine
     },
     today: country.today,
    }; 
-   countries_info.push(countryCovidObj);
+   covid_info.push(countryCovidObj);
   });
-  console.log('countries_covid_info: ',countries_info);
+  console.log('countries_covid_info: ',covid_info);
   //console.log(counrtyData);
  }
  catch(error){console.log('Could not fetch Countries data');}
@@ -107,48 +109,74 @@ main.insertAdjacentHTML('beforeend',lastestDataBtns);
  canvas.id = 'myChart';
  chartArea.insertAdjacentElement('afterbegin',canvas);
 
- btnsDiv.addEventListener('click', (e)=>{
+ const continents = document.querySelector('.continents');
+ continents.addEventListener('click', (e)=>{//continents
+  continentName = e.target.textContent;
+  console.log(continentName);
+  countries.forEach(country => {
+   if(country.region === continentName){
+    let countryCode = country.id;
+    covid_info.forEach(covCountry => {     
+     if(covCountry.id === countryCode){
+      let continentsObj={
+       name: covCountry.name,
+       lastest_data: covCountry.latest_data,
+       today: covCountry.today,
+      };
+      continents.push(continentsObj);
+     }
+    });
+   }
+  });
+  
+ });
+ btnsDiv.addEventListener('click', (e)=>{//countries
   console.log(e.target.textContent);
-  let cntryName = e.target.textContent
+  let cntryName = e.target.textContent;
+  countries.forEach(country => {
+   if(country.region === cntryName){
+    
+   }
+  });
  });
 }//diplayData
 
-function displayCharts(){
+function displayCharts(){//data.labels[], data.datasets.label, data.datasets.data[], type
  let myChart = document.getElementById('myChart').getContext('2d');
  let covidChart = new Chart(myChart, {
    type: 'line', //type of charts
    data:{
     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
+    datasets: [{
+     label: '# of Votes',
+     data: [12, 19, 3, 5, 2, 3],
+     backgroundColor: [
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(255, 206, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+      'rgba(255, 159, 64, 0.2)'
+     ],
+     borderColor: [
+      'rgba(255, 99, 132, 1)',
+      'rgba(54, 162, 235, 1)',
+      'rgba(255, 206, 86, 1)',
+      'rgba(75, 192, 192, 1)',
+      'rgba(153, 102, 255, 1)',
+      'rgba(255, 159, 64, 1)'
+     ],
+     borderWidth: 1
+    }]
    },
    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        }
+    scales: {
+     yAxes: [{
+      ticks: {
+       beginAtZero: true
+      }
+     }]
     }
+   }
   });
 }
