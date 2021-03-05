@@ -3,7 +3,10 @@ console.log('working COVID19');
 const countries = [];
 //const countries_info =[];
 const covid_info =[];
-const continents =[];
+const continentsArr =[];
+const wasSearchedContinent =[1];
+const wasSearchedCountry =[1];
+let lastestDataBtns;
 getCountries();
 getCountriesCOVID('countries');
 
@@ -49,7 +52,7 @@ async function getCountries(){ //fetches countries names and regions and code an
    };
    countries.push(countryObg);
   });
-  console.log('countries array:',countries);
+  //console.log('countries array:',countries);
   diplayData();
   displayCharts();
  }
@@ -73,22 +76,16 @@ function handleError(error){
 };//handleError
 
 function diplayData(){
- console.log('displayData');
+ console.log('displayData function');
  const title= document.querySelector('.title');
  const main = document.querySelector('.main');
  const chartArea = document.createElement('div');
  title.insertAdjacentElement('afterend',chartArea);
  chartArea.classList.add('chartArea');
 //latest data statuses and continents
-let lastestDataBtns =`
-<div class="lastestDataBtns">
- <div class="statuses">
-  <button id="Confirmed">Confirmed</button>
-  <button id="Deaths">Deaths</button>
-  <button id="Recovered">Recovered</button>
-  <button id="Critical">Critical</button>
- </div>
- <div class="continents">
+lastestDataBtns =`
+<div class="lastestDataBtns"> 
+ <div class="continentsBtns">
   <button id="Asia">Asia</button>
   <button id="Europe">Europe</button>
   <button id="Africa">Africa</button>
@@ -96,39 +93,54 @@ let lastestDataBtns =`
   <button id="World">World</button>
  </div>
 </div>`;
-main.insertAdjacentHTML('beforeend',lastestDataBtns);
 
- const btnsDiv = document.querySelector('.countriesBtnsDiv');
+main.insertAdjacentHTML('beforeend',lastestDataBtns);
+lastestDataBtns = document.querySelector('.lastestDataBtns');
+
+ /*const btnsDiv = document.querySelector('.countriesBtnsDiv');
  for(let i=0; i< countries.length; i++){
   let cntryBtn = document.createElement('button');
   cntryBtn.textContent = countries[i].name;
   btnsDiv.insertAdjacentElement('afterbegin',cntryBtn);
- }
+ }*/
 
  const canvas = document.createElement('canvas');
  canvas.id = 'myChart';
  chartArea.insertAdjacentElement('afterbegin',canvas);
+ //const theCanvas = document.getElementById('myChart');
 
- const continents = document.querySelector('.continents');
- continents.addEventListener('click', (e)=>{//continents
+ const myChartParent = document.querySelector('.chartArea');//
+ const continentsBtns = document.querySelector('.continentsBtns'); 
+ continentsBtns.addEventListener('click', (e)=>{//continents
   continentName = e.target.textContent;
-  console.log(continentName);
+
+  const isContinent = wasSearchedContinent.includes(continentName);//test if same continent was clicked twice
+  if(isContinent){
+    console.log('wasSearchedContinent', wasSearchedContinent);
+    return handleError("Continent was searched");
+  }
+  wasSearchedContinent.push(continentName);
+  addStatusesBtns();
+  
+  console.log('continentName:',continentName);
   countries.forEach(country => {
    if(country.region === continentName){
     let countryCode = country.id;
-    covid_info.forEach(covCountry => {     
+    covid_info.forEach(covCountry => {
      if(covCountry.id === countryCode){
       let continentsObj={
        name: covCountry.name,
-       lastest_data: covCountry.latest_data,
+       latest_data: covCountry.latest_data,
        today: covCountry.today,
       };
-      continents.push(continentsObj);
+      continentsArr.push(continentsObj);
      }
     });
    }
-  });
+  });//countries.forEach
+  //debugger;  
   
+  adjustDataToChartsJS(continentsArr);
  });
  btnsDiv.addEventListener('click', (e)=>{//countries
   console.log(e.target.textContent);
@@ -141,6 +153,92 @@ main.insertAdjacentHTML('beforeend',lastestDataBtns);
  });
 }//diplayData
 
+function addStatusesBtns(){
+ let statusesBtns =`
+ <div class="statuses">
+  <button id="Confirmed">Confirmed</button>
+  <button id="Deaths">Deaths</button>
+  <button id="Recovered">Recovered</button>
+  <button id="Critical">Critical</button>
+ </div>`;
+ let statuses = document.querySelector('.statuses');
+ if(!statuses){
+  lastestDataBtns.insertAdjacentHTML('afterbegin',statusesBtns);
+ }
+ 
+
+}
+
+
+const labels =[];
+const data = [];
+const type= 'line';
+const label= 'Confirmed';
+
+function adjustDataToChartsJS(array){
+ for(let i=0; i<array.length; i++){
+  labels.push(array[i].name);
+  data.push(array[i].latest_data.confirmed);
+ }
+ displayCharts(labels, label, data, type);
+}
+
+
+
+function displayCharts(labelsArr, label, dataArr, type){//data.labels[], data.datasets.label, data.datasets.data[], type
+ //console.log('data received to displayCharts', labelsArr, label, dataArr, type);
+ let myChart = document.getElementById('myChart').getContext('2d'); 
+ let covidChart = new Chart(myChart, {
+   type: type, //type of charts
+   data:{
+    labels: labelsArr,
+    datasets: [{
+     label: label,
+     data: dataArr,
+     backgroundColor: [
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(255, 206, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+      'rgba(255, 159, 64, 0.2)'
+     ],
+     borderColor: [
+      'rgba(255, 99, 132, 1)',
+      'rgba(54, 162, 235, 1)',
+      'rgba(255, 206, 86, 1)',
+      'rgba(75, 192, 192, 1)',
+      'rgba(153, 102, 255, 1)',
+      'rgba(255, 159, 64, 1)'
+     ],
+     borderWidth: 1
+    }]
+   },
+   options: {
+    scales: {
+     yAxes: [{
+      ticks: {
+       beginAtZero: true
+      }
+     }],
+     xAxes:[{
+      ticks:{
+       autoSkip: true,
+       maxTicksLimit: 250
+      }
+     }]
+    },
+    legend:{
+     labels:{
+      fontSize:12,
+     }
+    }
+   }
+  });
+}
+
+
+/* 
 function displayCharts(){//data.labels[], data.datasets.label, data.datasets.data[], type
  let myChart = document.getElementById('myChart').getContext('2d');
  let covidChart = new Chart(myChart, {
@@ -179,4 +277,4 @@ function displayCharts(){//data.labels[], data.datasets.label, data.datasets.dat
     }
    }
   });
-}
+} */
