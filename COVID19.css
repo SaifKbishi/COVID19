@@ -12,6 +12,8 @@ html{
  justify-content: center;
  flex-direction: column;
  align-items: center;
+ width: 80vw;;
+ margin: auto;
 }
 .title{
  display: flex;
@@ -31,7 +33,8 @@ button{
  margin: 3.3rem;
  justify-content: center;
  display: flex;
- flex-wrap: wrap;
+ flex-wrap: wrap-reverse;
+ flex-direction: row-reverse;
 }
 
 #myChart{

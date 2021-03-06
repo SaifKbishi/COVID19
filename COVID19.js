@@ -1,8 +1,9 @@
 console.log('working COVID19');
 
 const countries = [];
-//const countries_info =[];
+console.log('countries',countries);
 const covid_info =[];
+console.log('covid_info', covid_info);
 const continentsArr =[];
 const wasSearchedContinent =[1];
 const wasSearchedCountry =[1];
@@ -17,11 +18,9 @@ getCountries();
 getCountriesCOVID('countries');
 const colorsArray =[250];
 randomColorsArray();
-console.log('countries array:',countries);
-console.log('covid_info array', covid_info);
 let continentsBtns;
 let flagToDestroy = 0;
-//https://corona-api.com/countries
+
 async function getCountriesCOVID(land){ //gets COVID info per country or continent
  const covidBaseEndpoint = `https://corona-api.com/${land}`;
  try{
@@ -105,14 +104,19 @@ function diplayData(){
     console.log('wasSearchedContinent', wasSearchedContinent);
     return handleError("Continent was searched");
   }
-  wasSearchedContinent.push(continent);
-  
+  wasSearchedContinent.push(continent);  
   addStatusesBtns(continent);//function to add statuses buttons
-  addContinentCoutriesBtns(continent); //function to add this continent countries buttons
   
-  createAContinentCountries_Array(continent, status='confirmed');
-  console.log('continentsArr',continentsArr);
-  adjustDataToChartsJS(continentsArr, status='confirmed');
+  //addTheWorldCoutriesBtns(continent); //function to add the world countries buttons  
+  if(continent === 'World'){
+    console.log('this is the world');
+    addTheWorldCoutriesBtns();
+    createTheWorldArrayPerStatus(status='confirmed');
+  }else{
+    addContinentCoutriesBtns(continent); //function to add this continent countries buttons  
+    createAContinentCountries_Array(continent, status='confirmed');
+  }  
+  
  });
 }
 catch(error){console.log(error, 'problem with continentsBtns.addEventListener');}
@@ -138,6 +142,19 @@ function createAContinentCountries_Array(continent, statusbtn){
  }
  createAContinentArrayPerStatus(thisContinentCountries_IDs, statusbtn);
 }//createAContinentCountries_Array
+
+function createTheWorldArrayPerStatus(statusbtn){
+  let status = statusbtn.toLowerCase();
+  let filteredStatusArray = [];
+  for(let i=0; i<covid_info.length; i++){    
+    let countryStatusObj ={
+      name: covid_info[i].name,
+      status: covid_info[i].latest_data[status],
+    };
+    filteredStatusArray.push(countryStatusObj);    
+  }
+  adjustDataToChartsJS(filteredStatusArray,status);
+}//createTheWorldCountries_Array
 
 function createAContinentArrayPerStatus(thisContinentCountries_IDs, statusbtn){
   let status = statusbtn.toLowerCase();
@@ -183,6 +200,29 @@ function addContinentCoutriesBtns(thisContinent){
  });
 }//addContinentCoutriesBtns
 
+function addTheWorldCoutriesBtns(){
+  mainBtns = document.querySelector('.mainBtns'); 
+  mainBtns.insertAdjacentElement('afterend',btnsDiv);
+  btnsDiv.classList.add('CountriesButtons');
+  btnsDiv.innerHTML = '';
+  for(let i=0; i< countries.length; i++){
+    let cntryBtn = document.createElement('button');
+    cntryBtn.textContent = countries[i].name;
+    //console.log(countries[i].name);
+    //debugger;
+    btnsDiv.insertAdjacentElement('afterbegin',cntryBtn);
+    
+  }  
+  btnsDiv.addEventListener('click', (e)=>{
+   let countryName  = e.target.textContent;
+   for(let i=0; i<covid_info.length; i++){
+    if(countryName === covid_info[i].name){
+     adjustCountryDataToChartJS(covid_info[i]);
+    }
+   }
+  });
+ }//addTheWorldCoutriesBtns
+
 function adjustCountryDataToChartJS(countryToDisplay){
  let dataArr = Object.values(countryToDisplay.latest_data);
  let labelsArr = Object.keys(countryToDisplay.latest_data);
@@ -197,7 +237,7 @@ function adjustDataToChartsJS(array, status){
   data.push(array[i].status);
  }
  label= status;
- /*if(flagToDestroy){
+ if(flagToDestroy){
    console.log(flagToDestroy);
    setTimeout(()=>{
     removeDataFromChart();
@@ -205,16 +245,18 @@ function adjustDataToChartsJS(array, status){
     
  }else {
   countinue;
- }*/
+ }
  displayCharts(labels, label, data, type);
 }//adjustDataToChartsJS
 
 
 function displayCharts(labelsArr, label, dataArr, type){
- Chart.defaults.global.defaultFontSize = 12;
+ Chart.defaults.global.defaultFontSize = 10;
  let myChart = document.getElementById('myChart').getContext('2d'); 
- 
- let covidChart = new Chart(myChart, {
+ let covidChart;
+ //removeDataFromChart();
+ //covidChart.destroy();
+ covidChart = new Chart(myChart, {
    type: type, //type of charts
    data:{
     labels: labelsArr,
@@ -243,19 +285,14 @@ function displayCharts(labelsArr, label, dataArr, type){
      xAxes:[{
       ticks:{
        autoSkip: true,
-       maxTicksLimit: 250
+       maxTicksLimit: 100
       }
      }]
     },
-  /*   legend:{
-     labels:{
-      fontSize:12,
-     }
-    }, */
     responsive:true,
    }
   });
-  
+  myChart.update();
 }//displayCharts
 
 function randomColorsArray(){
