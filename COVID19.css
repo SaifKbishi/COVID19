@@ -24,7 +24,8 @@ button{
  padding: 2px;
 }
 .chartArea{
- height: 80vh;
+ height: 70vh;
+ position: relative;
 }
 .countriesBtnsDiv{
  margin: 3.3rem;

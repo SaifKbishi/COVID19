@@ -6,11 +6,26 @@ const covid_info =[];
 const continentsArr =[];
 const wasSearchedContinent =[1];
 const wasSearchedCountry =[1];
-let lastestDataBtns;
+let lastestDataBtns=`
+<div class="lastestDataBtns"> 
+ <div class="continentsBtns">
+  <button id="Asia">Asia</button>
+  <button id="Europe">Europe</button>
+  <button id="Africa">Africa</button>
+  <button id="Americas">Americas</button>
+  <button id="World">World</button>
+ </div>
+</div>`;
+//let continentName;
+let btnsDiv;
+const labels =[];
+const data = [];
+let type= 'line';
+let label= 'Confirmed';
 getCountries();
 getCountriesCOVID('countries');
-
-//diplayData();
+console.log('countries array:',countries);
+console.log('covid_info array', covid_info);
 
 //https://corona-api.com/countries
 async function getCountriesCOVID(land){ //gets COVID info per country or continent
@@ -32,7 +47,7 @@ async function getCountriesCOVID(land){ //gets COVID info per country or contine
    }; 
    covid_info.push(countryCovidObj);
   });
-  console.log('countries_covid_info: ',covid_info);
+  //console.log('countries_covid_info: ',covid_info);
   //console.log(counrtyData);
  }
  catch(error){console.log('Could not fetch Countries data');}
@@ -53,10 +68,11 @@ async function getCountries(){ //fetches countries names and regions and code an
    countries.push(countryObg);
   });
   //console.log('countries array:',countries);
-  diplayData();
-  displayCharts();
+  try{diplayData();}catch(error){error,'trying to call displayData function'}
+  try{displayCharts();}catch(error){error,'trying to call displayCharts function'} 
+  
  }
- catch(error){console.log('Could not fetch Countries data');}
+ catch(error){console.log(error,'Could not fetch Countries data');}
 }//getCountries
 
 //generic function for fetching URL
@@ -74,7 +90,12 @@ function handleError(error){
  const errorContainer = document.querySelector(".error");
  errorContainer.textContent = error;
 };//handleError
-
+function addCanvas(){
+ let chartAreaContainer = document.querySelector('.chartArea');
+ const canvas = document.createElement('canvas');
+ canvas.id = 'myChart';
+ chartAreaContainer.insertAdjacentElement('afterbegin',canvas);
+}//addCanvas
 function diplayData(){
  console.log('displayData function');
  const title= document.querySelector('.title');
@@ -82,36 +103,21 @@ function diplayData(){
  const chartArea = document.createElement('div');
  title.insertAdjacentElement('afterend',chartArea);
  chartArea.classList.add('chartArea');
-//latest data statuses and continents
-lastestDataBtns =`
-<div class="lastestDataBtns"> 
- <div class="continentsBtns">
-  <button id="Asia">Asia</button>
-  <button id="Europe">Europe</button>
-  <button id="Africa">Africa</button>
-  <button id="Americas">Americas</button>
-  <button id="World">World</button>
- </div>
-</div>`;
 
-main.insertAdjacentHTML('beforeend',lastestDataBtns);
-lastestDataBtns = document.querySelector('.lastestDataBtns');
+ main.insertAdjacentHTML('beforeend',lastestDataBtns);
+ lastestDataBtns = document.querySelector('.lastestDataBtns');
 
- /*const btnsDiv = document.querySelector('.countriesBtnsDiv');
- for(let i=0; i< countries.length; i++){
-  let cntryBtn = document.createElement('button');
-  cntryBtn.textContent = countries[i].name;
-  btnsDiv.insertAdjacentElement('afterbegin',cntryBtn);
- }*/
-
+ //addCanvas();
  const canvas = document.createElement('canvas');
- canvas.id = 'myChart';
- chartArea.insertAdjacentElement('afterbegin',canvas);
+ canvas.id = 'myChart'; 
+ chartArea.insertAdjacentElement('afterbegin',canvas); 
  //const theCanvas = document.getElementById('myChart');
 
  const myChartParent = document.querySelector('.chartArea');//
  const continentsBtns = document.querySelector('.continentsBtns'); 
- continentsBtns.addEventListener('click', (e)=>{//continents
+ /********************HERE IS THE continentsBtns addEventListener*****************************/
+ try{
+  continentsBtns.addEventListener('click', (e)=>{//continents
   continentName = e.target.textContent;
 
   const isContinent = wasSearchedContinent.includes(continentName);//test if same continent was clicked twice
@@ -120,29 +126,18 @@ lastestDataBtns = document.querySelector('.lastestDataBtns');
     return handleError("Continent was searched");
   }
   wasSearchedContinent.push(continentName);
-  addStatusesBtns();
+  addStatusesBtns(continentName);//function to add statuses buttons
+  addContinentCoutriesBtns(continentName); //function to add this continent countries
   
   console.log('continentName:',continentName);
-  countries.forEach(country => {
-   if(country.region === continentName){
-    let countryCode = country.id;
-    covid_info.forEach(covCountry => {
-     if(covCountry.id === countryCode){
-      let continentsObj={
-       name: covCountry.name,
-       latest_data: covCountry.latest_data,
-       today: covCountry.today,
-      };
-      continentsArr.push(continentsObj);
-     }
-    });
-   }
-  });//countries.forEach
-  //debugger;  
-  
-  adjustDataToChartsJS(continentsArr);
+  addAContinentCountriesTo_continentsArr(continentName, status='confirmed');
+  console.log('continentsArr',continentsArr);
+  adjustDataToChartsJS(continentsArr, status='confirmed');
  });
- btnsDiv.addEventListener('click', (e)=>{//countries
+}
+catch(error){console.log(error, 'problem with continentsBtns.addEventListener');}
+
+/*  btnsDiv.addEventListener('click', (e)=>{//countries
   console.log(e.target.textContent);
   let cntryName = e.target.textContent;
   countries.forEach(country => {
@@ -150,10 +145,54 @@ lastestDataBtns = document.querySelector('.lastestDataBtns');
     
    }
   });
- });
+ }); */
 }//diplayData
 
-function addStatusesBtns(){
+/* function addAContinentCountriesTo_continentsArr(continentName, status){
+ status= status.toLowerCase();
+ //console.log('status from line 150',status);
+ try { 
+  for(let i=0; i<countries.length; i++){
+   if(countries[i].region === continentName){
+    let countryCode = countries[i].id;
+    let countryName = countries[i].name;
+    for(let j=0; j<covid_info.length; j++){
+     if(covid_info[j].id === countryCode){
+      let continentsObj={
+       name: covid_info[j].name,
+       latest_data: covid_info[j].latest_data[status],
+       today: covid_info[j].today,
+      };
+      continentsArr.push(continentsObj);
+     }else{j++;}
+    }
+   }else{i++;}
+  } 
+ }   
+  catch (error) {console.log(error, 'creating continentsArr in function addAContinentCountriesTo_continentsArr'); } 
+}//addAContinentCountriesTo_continentsArr */
+function addAContinentCountriesTo_continentsArr(continentName, status){
+ status= status.toLowerCase();
+ try {  
+  countries.forEach(country => {
+   if(country.region === continentName){
+    let countryCode = country.id;
+    covid_info.forEach(covCountry => {
+     if(covCountry.id === countryCode){
+      let continentsObj={
+       name: covCountry.name,
+       latest_data: covCountry.latest_data[status],
+       today: covCountry.today,
+      };
+      continentsArr.push(continentsObj);
+     }
+    });
+   }
+  });
+ } catch (error) {console.log(error, 'creating continentsArr in function addAContinentCountriesTo_continentsArr'); } 
+}//addAContinentCountriesTo_continentsArr
+
+function addStatusesBtns(continentName){
  let statusesBtns =`
  <div class="statuses">
   <button id="Confirmed">Confirmed</button>
@@ -163,31 +202,77 @@ function addStatusesBtns(){
  </div>`;
  let statuses = document.querySelector('.statuses');
  if(!statuses){
+  console.log('adding statusesBtns');
   lastestDataBtns.insertAdjacentHTML('afterbegin',statusesBtns);
+
+  try {
+   let statusesBtns = document.querySelector('.statuses');
+   statusesBtns.addEventListener('click', (e)=>{
+    //debugger;
+    console.log(e.target.textContent, continentName);
+    let statusbtn =e.target.textContent;
+
+    addAContinentCountriesTo_continentsArr(continentName, statusbtn);
+   });
+  } catch (error) {console.log(error, 'addEventListener statuses');  }
  }
  
+}//addStatusesBtns
 
-}
+function addContinentCoutriesBtns(continentName){
+ //console.log('continentName from addContinentCoutriesBtns:',continentName); 
+ btnsDiv = document.querySelector('.countriesBtnsDiv');
+ btnsDiv.innerHTML = '';
+ countries.forEach(country => {
+  if(country.region === continentName){
+   let countryCode = country.id;
+   covid_info.forEach(covCountry => {
+    if(covCountry.id === countryCode){
+     let cntryBtn = document.createElement('button');
+     cntryBtn.textContent = covCountry.name;
+     btnsDiv.insertAdjacentElement('afterbegin',cntryBtn);
+    }
+   });
+   
+  }
+ });//countries.forEach
+ btnsDiv.addEventListener('click', (e)=>{
+  console.log(e.target.textContent);
+  let countryName  = e.target.textContent;
+  for(let i=0; i<covid_info.length; i++){
+   if(countryName === covid_info[i].name){
+    adjustCountryDataToChartJS(covid_info[i]);
+   }
+  }
+ });
+}//addContinentCoutriesBtns
+function adjustCountryDataToChartJS(countryToDisplay){
+ let dataArr = Object.values(countryToDisplay.latest_data);
+ let labelsArr = Object.keys(countryToDisplay.latest_data);
+ let label = countryToDisplay.name; 
+ let type = 'doughnut';
+ console.log('labelsArr',labelsArr, 'label',label, 'dataArr',dataArr, 'type',type);
+ //displayCharts(labelsArr, label, dataArr, type)
+ displayCharts(labelsArr, label, dataArr, type)
+}//adjustCountryDataToChartJS
 
-
-const labels =[];
-const data = [];
-const type= 'line';
-const label= 'Confirmed';
 
 function adjustDataToChartsJS(array){
+ console.log('status from adjustDataToChartsJS',status);
  for(let i=0; i<array.length; i++){
   labels.push(array[i].name);
-  data.push(array[i].latest_data.confirmed);
+  data.push(array[i].latest_data);
  }
+ label= status;
+ console.log('label',label);
  displayCharts(labels, label, data, type);
 }
 
-
-
 function displayCharts(labelsArr, label, dataArr, type){//data.labels[], data.datasets.label, data.datasets.data[], type
  //console.log('data received to displayCharts', labelsArr, label, dataArr, type);
+ Chart.defaults.global.defaultFontSize = 12;
  let myChart = document.getElementById('myChart').getContext('2d'); 
+ 
  let covidChart = new Chart(myChart, {
    type: type, //type of charts
    data:{
@@ -228,53 +313,13 @@ function displayCharts(labelsArr, label, dataArr, type){//data.labels[], data.da
       }
      }]
     },
-    legend:{
+  /*   legend:{
      labels:{
       fontSize:12,
      }
-    }
+    }, */
+    responsive:true,
    }
   });
 }
 
-
-/* 
-function displayCharts(){//data.labels[], data.datasets.label, data.datasets.data[], type
- let myChart = document.getElementById('myChart').getContext('2d');
- let covidChart = new Chart(myChart, {
-   type: 'line', //type of charts
-   data:{
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-    datasets: [{
-     label: '# of Votes',
-     data: [12, 19, 3, 5, 2, 3],
-     backgroundColor: [
-      'rgba(255, 99, 132, 0.2)',
-      'rgba(54, 162, 235, 0.2)',
-      'rgba(255, 206, 86, 0.2)',
-      'rgba(75, 192, 192, 0.2)',
-      'rgba(153, 102, 255, 0.2)',
-      'rgba(255, 159, 64, 0.2)'
-     ],
-     borderColor: [
-      'rgba(255, 99, 132, 1)',
-      'rgba(54, 162, 235, 1)',
-      'rgba(255, 206, 86, 1)',
-      'rgba(75, 192, 192, 1)',
-      'rgba(153, 102, 255, 1)',
-      'rgba(255, 159, 64, 1)'
-     ],
-     borderWidth: 1
-    }]
-   },
-   options: {
-    scales: {
-     yAxes: [{
-      ticks: {
-       beginAtZero: true
-      }
-     }]
-    }
-   }
-  });
-} */
