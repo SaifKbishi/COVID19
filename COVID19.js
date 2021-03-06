@@ -237,15 +237,6 @@ function adjustDataToChartsJS(array, status){
   data.push(array[i].status);
  }
  label= status;
- if(flagToDestroy){
-   console.log(flagToDestroy);
-   setTimeout(()=>{
-    removeDataFromChart();
-   },3000);
-    
- }else {
-  countinue;
- }
  displayCharts(labels, label, data, type);
 }//adjustDataToChartsJS
 

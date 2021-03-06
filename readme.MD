@@ -1,16 +1,17 @@
-//pseudo code
-//generic function for fetching URL      DONE  
-//function for fetching Countries data from restcountries API for all countries  DONE
-//Country: region, cca2, name.common and store it in array of objects  DONE
-allCountries  
-{
- country: israel,
- region: asia,
- code: IL,
-}  
-//function for fetching COVID data per country that can display the regions   
-//embed chart and test it on static data  DONE
-//function to display Chart for each Continents or country  
-//function to display data  
-//define a div for handleError  
-//function for colors
+//pseudo code  
+//function to gets COVID info per country or continent  
+//function to fetches countries names and regions and code and store them in array of objects  
+//   
+//generic function for fetching URL  
+//function to diplayData  
+//function to add Statuses Buttons   
+//function to create A Continent Countries Array  
+//function to create The World Array Per Status  
+//function to create A Continent Array Per Status  
+//function to add Continent Coutries Buttons  
+//function to add The World Coutriesbutton   
+//function to adjust Country Data To ChartJS  
+//function to adjust Data To ChartsJS  
+//function to display Charts  
+//function to create random Colors Array for the graph  
+//function to remove Data From Chart  (NOT working)
