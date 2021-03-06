@@ -6,26 +6,20 @@ const covid_info =[];
 const continentsArr =[];
 const wasSearchedContinent =[1];
 const wasSearchedCountry =[1];
-let lastestDataBtns=`
-<div class="lastestDataBtns"> 
- <div class="continentsBtns">
-  <button id="Asia">Asia</button>
-  <button id="Europe">Europe</button>
-  <button id="Africa">Africa</button>
-  <button id="Americas">Americas</button>
-  <button id="World">World</button>
- </div>
-</div>`;
-//let continentName;
+
+let continentName;
 let btnsDiv;
 const labels =[];
 const data = [];
 let type= 'line';
-let label= 'Confirmed';
+let label= 'confirmed';
 getCountries();
 getCountriesCOVID('countries');
+const colorsArray =[250];
+randomColorsArray();
 console.log('countries array:',countries);
 console.log('covid_info array', covid_info);
+let continentsBtns;
 
 //https://corona-api.com/countries
 async function getCountriesCOVID(land){ //gets COVID info per country or continent
@@ -87,15 +81,11 @@ async function fetchAnyURL(url){
 }//fetchAnyURL
 
 function handleError(error){
- const errorContainer = document.querySelector(".error");
- errorContainer.textContent = error;
+  console.log(error);
+ /*const errorContainer = document.querySelector(".error");
+ errorContainer.textContent = error;*/
 };//handleError
-function addCanvas(){
- let chartAreaContainer = document.querySelector('.chartArea');
- const canvas = document.createElement('canvas');
- canvas.id = 'myChart';
- chartAreaContainer.insertAdjacentElement('afterbegin',canvas);
-}//addCanvas
+
 function diplayData(){
  console.log('displayData function');
  const title= document.querySelector('.title');
@@ -103,49 +93,34 @@ function diplayData(){
  const chartArea = document.createElement('div');
  title.insertAdjacentElement('afterend',chartArea);
  chartArea.classList.add('chartArea');
-
- main.insertAdjacentHTML('beforeend',lastestDataBtns);
- lastestDataBtns = document.querySelector('.lastestDataBtns');
-
- //addCanvas();
+ //addCanvas
  const canvas = document.createElement('canvas');
  canvas.id = 'myChart'; 
  chartArea.insertAdjacentElement('afterbegin',canvas); 
- //const theCanvas = document.getElementById('myChart');
 
- const myChartParent = document.querySelector('.chartArea');//
- const continentsBtns = document.querySelector('.continentsBtns'); 
+ continentsBtnsDiv = document.querySelector('.continentsBtnsDiv'); 
  /********************HERE IS THE continentsBtns addEventListener*****************************/
  try{
-  continentsBtns.addEventListener('click', (e)=>{//continents
-  continentName = e.target.textContent;
-
-  const isContinent = wasSearchedContinent.includes(continentName);//test if same continent was clicked twice
+  continentsBtnsDiv.addEventListener('click', (e)=>{//continents
+   continentName ='';   
+   continentName = e.target.textContent;   
+   let continent = continentName;
+  const isContinent = wasSearchedContinent.includes(continent);//test if same continent was clicked twice
   if(isContinent){
     console.log('wasSearchedContinent', wasSearchedContinent);
     return handleError("Continent was searched");
   }
-  wasSearchedContinent.push(continentName);
-  addStatusesBtns(continentName);//function to add statuses buttons
-  addContinentCoutriesBtns(continentName); //function to add this continent countries
+  wasSearchedContinent.push(continent);
   
-  console.log('continentName:',continentName);
+  addStatusesBtns(continent);//function to add statuses buttons
+  addContinentCoutriesBtns(continent); //function to add this continent countries buttons
+  
   addAContinentCountriesTo_continentsArr(continentName, status='confirmed');
   console.log('continentsArr',continentsArr);
   adjustDataToChartsJS(continentsArr, status='confirmed');
  });
 }
 catch(error){console.log(error, 'problem with continentsBtns.addEventListener');}
-
-/*  btnsDiv.addEventListener('click', (e)=>{//countries
-  console.log(e.target.textContent);
-  let cntryName = e.target.textContent;
-  countries.forEach(country => {
-   if(country.region === cntryName){
-    
-   }
-  });
- }); */
 }//diplayData
 
 /* function addAContinentCountriesTo_continentsArr(continentName, status){
@@ -173,7 +148,7 @@ catch(error){console.log(error, 'problem with continentsBtns.addEventListener');
 }//addAContinentCountriesTo_continentsArr */
 function addAContinentCountriesTo_continentsArr(continentName, status){
  status= status.toLowerCase();
- try {  
+ try{
   countries.forEach(country => {
    if(country.region === continentName){
     let countryCode = country.id;
@@ -192,48 +167,67 @@ function addAContinentCountriesTo_continentsArr(continentName, status){
  } catch (error) {console.log(error, 'creating continentsArr in function addAContinentCountriesTo_continentsArr'); } 
 }//addAContinentCountriesTo_continentsArr
 
-function addStatusesBtns(continentName){
- let statusesBtns =`
- <div class="statuses">
-  <button id="Confirmed">Confirmed</button>
-  <button id="Deaths">Deaths</button>
-  <button id="Recovered">Recovered</button>
-  <button id="Critical">Critical</button>
- </div>`;
- let statuses = document.querySelector('.statuses');
- if(!statuses){
-  console.log('adding statusesBtns');
-  lastestDataBtns.insertAdjacentHTML('afterbegin',statusesBtns);
-
-  try {
-   let statusesBtns = document.querySelector('.statuses');
-   statusesBtns.addEventListener('click', (e)=>{
-    //debugger;
-    console.log(e.target.textContent, continentName);
-    let statusbtn =e.target.textContent;
-
-    addAContinentCountriesTo_continentsArr(continentName, statusbtn);
-   });
-  } catch (error) {console.log(error, 'addEventListener statuses');  }
- }
- 
+function addStatusesBtns(cntnntName){
+  const newContinentName =cntnntName;
+  let statuses = document.querySelector('.statuses');
+  statuses.style.visibility= 'visible';
+  statuses.addEventListener('click', (ev)=>{
+    let statusbtn =ev.target.textContent;    
+    //addAContinentCountriesTo_continentsArr(continentName, statusbtn);
+    createAContinentCountries_Array(newContinentName, statusbtn);
+  }); 
 }//addStatusesBtns
 
-function addContinentCoutriesBtns(continentName){
- //console.log('continentName from addContinentCoutriesBtns:',continentName); 
- btnsDiv = document.querySelector('.countriesBtnsDiv');
+function createAContinentCountries_Array(continent, statusbtn){
+ console.log('182', continent, statusbtn);
+ let thisContinentCountries = countries.filter(country => {
+  if(country.region === continent) return country.id;
+ });
+ console.log('186 thisContinentCountries', thisContinentCountries);
+ let thisContinentCountries_IDs =[];
+ for(let i=0; i<thisContinentCountries.length; i++){
+  thisContinentCountries_IDs[i] = thisContinentCountries[i].id;
+ }
+ console.log('191 IDs: ',thisContinentCountries_IDs);
+ createAContinentArrayPerStatus(thisContinentCountries_IDs, statusbtn);
+}//createAContinentCountries_Array
+
+function createAContinentArrayPerStatus(thisContinentCountries_IDs, statusbtn){
+  console.log('191 thisContinentCountries', thisContinentCountries_IDs, 'statusbtn clicked', statusbtn);
+  let status = statusbtn.toLowerCase();
+  let filteredStatusArray = [];
+  for(let i=0; i<covid_info.length; i++){
+    if(thisContinentCountries_IDs.includes(covid_info[i].id)){
+      let countryStatusObj ={
+        name: covid_info[i].name,
+        status: covid_info[i].latest_data[status],
+      };
+      filteredStatusArray.push(countryStatusObj);
+    }
+  }
+  //send filteredStatusArray with status to display the chart
+  console.log(filteredStatusArray);
+}
+
+
+
+btnsDiv = document.createElement('div');
+function addContinentCoutriesBtns(thisContinent){
+ console.log('thisContinent from addContinentCoutriesBtns:',thisContinent); 
+ mainBtns = document.querySelector('.mainBtns'); 
+ mainBtns.insertAdjacentElement('afterend',btnsDiv);
  btnsDiv.innerHTML = '';
  countries.forEach(country => {
-  if(country.region === continentName){
+  if(country.region === thisContinent){
    let countryCode = country.id;
    covid_info.forEach(covCountry => {
     if(covCountry.id === countryCode){
      let cntryBtn = document.createElement('button');
      cntryBtn.textContent = covCountry.name;
      btnsDiv.insertAdjacentElement('afterbegin',cntryBtn);
+     btnsDiv.classList.add('CountriesButtons');
     }
-   });
-   
+   });   
   }
  });//countries.forEach
  btnsDiv.addEventListener('click', (e)=>{
@@ -246,16 +240,14 @@ function addContinentCoutriesBtns(continentName){
   }
  });
 }//addContinentCoutriesBtns
+
 function adjustCountryDataToChartJS(countryToDisplay){
  let dataArr = Object.values(countryToDisplay.latest_data);
  let labelsArr = Object.keys(countryToDisplay.latest_data);
  let label = countryToDisplay.name; 
  let type = 'doughnut';
- console.log('labelsArr',labelsArr, 'label',label, 'dataArr',dataArr, 'type',type);
- //displayCharts(labelsArr, label, dataArr, type)
  displayCharts(labelsArr, label, dataArr, type)
 }//adjustCountryDataToChartJS
-
 
 function adjustDataToChartsJS(array){
  console.log('status from adjustDataToChartsJS',status);
@@ -266,7 +258,7 @@ function adjustDataToChartsJS(array){
  label= status;
  console.log('label',label);
  displayCharts(labels, label, data, type);
-}
+}//adjustDataToChartsJS
 
 function displayCharts(labelsArr, label, dataArr, type){//data.labels[], data.datasets.label, data.datasets.data[], type
  //console.log('data received to displayCharts', labelsArr, label, dataArr, type);
@@ -288,14 +280,7 @@ function displayCharts(labelsArr, label, dataArr, type){//data.labels[], data.da
       'rgba(153, 102, 255, 0.2)',
       'rgba(255, 159, 64, 0.2)'
      ],
-     borderColor: [
-      'rgba(255, 99, 132, 1)',
-      'rgba(54, 162, 235, 1)',
-      'rgba(255, 206, 86, 1)',
-      'rgba(75, 192, 192, 1)',
-      'rgba(153, 102, 255, 1)',
-      'rgba(255, 159, 64, 1)'
-     ],
+     borderColor: colorsArray ,
      borderWidth: 1
     }]
    },
@@ -321,5 +306,10 @@ function displayCharts(labelsArr, label, dataArr, type){//data.labels[], data.da
     responsive:true,
    }
   });
-}
+}//displayCharts
 
+function randomColorsArray(){
+  for(let i=0; i< 250; i++){   
+    colorsArray[i] = '#'+(0x1000000+Math.random()*0xffffff).toString(16).substr(1,6);
+  }  
+}//randomColorsArray
