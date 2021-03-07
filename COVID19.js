@@ -208,10 +208,7 @@ function addTheWorldCoutriesBtns(){
   for(let i=0; i< countries.length; i++){
     let cntryBtn = document.createElement('button');
     cntryBtn.textContent = countries[i].name;
-    //console.log(countries[i].name);
-    //debugger;
-    btnsDiv.insertAdjacentElement('afterbegin',cntryBtn);
-    
+    btnsDiv.insertAdjacentElement('afterbegin',cntryBtn);    
   }  
   btnsDiv.addEventListener('click', (e)=>{
    let countryName  = e.target.textContent;
@@ -227,11 +224,19 @@ function adjustCountryDataToChartJS(countryToDisplay){
  let dataArr = Object.values(countryToDisplay.latest_data);
  let labelsArr = Object.keys(countryToDisplay.latest_data);
  let label = countryToDisplay.name; 
+ console.log(label);
  let type = 'doughnut';
  displayCharts(labelsArr, label, dataArr, type)
 }//adjustCountryDataToChartJS
 
 function adjustDataToChartsJS(array, status){
+ console.log('01 labels: ',labels, labels.length);
+ for(let i=0; i<array.length; i++){
+  labels.pop();
+  data.pop();
+ }
+ console.log('02 labels: ',labels, labels.length);
+
  for(let i=0; i<array.length; i++){
   labels.push(array[i].name);
   data.push(array[i].status);
@@ -240,13 +245,21 @@ function adjustDataToChartsJS(array, status){
  displayCharts(labels, label, data, type);
 }//adjustDataToChartsJS
 
-
 function displayCharts(labelsArr, label, dataArr, type){
  Chart.defaults.global.defaultFontSize = 10;
  let myChart = document.getElementById('myChart').getContext('2d'); 
  let covidChart;
  //removeDataFromChart();
  //covidChart.destroy();
+ 
+ /*console.log('data',data);
+ console.log(typeof(data));
+
+ if(data.length > 0){
+  console.log('data.length',data.length);
+  data = {};
+ }*/
+ 
  covidChart = new Chart(myChart, {
    type: type, //type of charts
    data:{
@@ -283,7 +296,7 @@ function displayCharts(labelsArr, label, dataArr, type){
     responsive:true,
    }
   });
-  myChart.update();
+  
 }//displayCharts
 
 function randomColorsArray(){

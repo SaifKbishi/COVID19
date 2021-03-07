@@ -1,4 +1,5 @@
 //pseudo code  
+  
 //function to gets COVID info per country or continent  
 //function to fetches countries names and regions and code and store them in array of objects  
 //   
