@@ -116,7 +116,6 @@ function diplayData(){
     addContinentCoutriesBtns(continent); //function to add this continent countries buttons  
     createAContinentCountries_Array(continent, status='confirmed');
   }  
-  
  });
 }
 catch(error){console.log(error, 'problem with continentsBtns.addEventListener');}
@@ -229,14 +228,13 @@ function adjustCountryDataToChartJS(countryToDisplay){
  displayCharts(labelsArr, label, dataArr, type)
 }//adjustCountryDataToChartJS
 
-function adjustDataToChartsJS(array, status){
- console.log('01 labels: ',labels, labels.length);
+function adjustDataToChartsJS(array, status){  
+ console.log('Emptying arraies');
  for(let i=0; i<array.length; i++){
   labels.pop();
   data.pop();
  }
- console.log('02 labels: ',labels, labels.length);
-
+ console.log('Adding data');
  for(let i=0; i<array.length; i++){
   labels.push(array[i].name);
   data.push(array[i].status);
@@ -248,18 +246,7 @@ function adjustDataToChartsJS(array, status){
 function displayCharts(labelsArr, label, dataArr, type){
  Chart.defaults.global.defaultFontSize = 10;
  let myChart = document.getElementById('myChart').getContext('2d'); 
- let covidChart;
- //removeDataFromChart();
- //covidChart.destroy();
- 
- /*console.log('data',data);
- console.log(typeof(data));
-
- if(data.length > 0){
-  console.log('data.length',data.length);
-  data = {};
- }*/
- 
+ let covidChart; 
  covidChart = new Chart(myChart, {
    type: type, //type of charts
    data:{
@@ -304,12 +291,3 @@ function randomColorsArray(){
     colorsArray[i] = '#'+(0x1000000+Math.random()*0xffffff).toString(16).substr(1,6);
   }  
 }//randomColorsArray
-
-//function displayCharts(labelsArr, label, dataArr, type)
-function removeDataFromChart() {
-  let labelsDestroy =[];
-  let dataDestroy = [];
-  let typeDestroy = '';
-  let labelDestroy = '';  
-  displayCharts(labelsDestroy, labelDestroy, dataDestroy, typeDestroy)
-}
