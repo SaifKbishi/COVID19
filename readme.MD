@@ -15,4 +15,4 @@
 //function to adjust Data To ChartsJS  
 //function to display Charts  
 //function to create random Colors Array for the graph  
-//function to remove Data From Chart  (done by emptying thee raaies before adjusting them to displayCharts function)
+//function to remove Data From Chart  (done by emptying the arraies before adjusting them to displayCharts function)
