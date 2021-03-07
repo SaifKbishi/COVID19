@@ -19,7 +19,6 @@ getCountriesCOVID('countries');
 const colorsArray =[250];
 randomColorsArray();
 let continentsBtns;
-let flagToDestroy = 0;
 
 async function getCountriesCOVID(land){ //gets COVID info per country or continent
  const covidBaseEndpoint = `https://corona-api.com/${land}`;
@@ -95,7 +94,6 @@ function diplayData(){
  continentsBtnsDiv = document.querySelector('.continentsBtnsDiv');
  try{
   continentsBtnsDiv.addEventListener('click', (e)=>{//continents
-   flagToDestroy = 1;
    continentName ='';   
    continentName = e.target.textContent;   
    let continent = continentName;
@@ -176,6 +174,7 @@ function addContinentCoutriesBtns(thisContinent){
  mainBtns = document.querySelector('.mainBtns'); 
  mainBtns.insertAdjacentElement('afterend',btnsDiv);
  btnsDiv.innerHTML = '';
+ let i=1;
  countries.forEach(country => {
   if(country.region === thisContinent){
    let countryCode = country.id;
@@ -183,6 +182,7 @@ function addContinentCoutriesBtns(thisContinent){
     if(covCountry.id === countryCode){
      let cntryBtn = document.createElement('button');
      cntryBtn.textContent = covCountry.name;
+     cntryBtn.style.background = `linear-gradient(${i*7}deg, #33ccff 0%, #FF0000 ${i*3}%)`; i++;
      btnsDiv.insertAdjacentElement('afterbegin',cntryBtn);
      btnsDiv.classList.add('CountriesButtons');
     }

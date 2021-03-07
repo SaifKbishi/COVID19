@@ -25,7 +25,8 @@ html{
 
 button{
  margin: 0.2rem;
- padding: 2px;
+ padding: 2px 12px;
+ border-radius: 15px;
 }
 .chartArea{
  height: 70vh;
@@ -36,7 +37,10 @@ button{
  justify-content: center;
  display: flex;
  flex-wrap: wrap-reverse;
- flex-direction: row-reverse;
+ flex-direction: row-reverse; 
+}
+.CountriesButtons button{
+ color:azure;
 }
 
 #myChart{
