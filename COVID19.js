@@ -14,11 +14,14 @@ const labels =[];
 const data = [];
 let type= 'line';
 let label= 'confirmed';
+const countryBaseEndpoint = 'https://restcountries.herokuapp.com/api/v1';
+const cors = 'https://api.codetabs.com/v1/proxy?quest=';
 getCountries();
 getCountriesCOVID('countries');
 const colorsArray =[250];
 randomColorsArray();
 let continentsBtns;
+
 
 async function getCountriesCOVID(land){ //gets COVID info per country or continent
  const covidBaseEndpoint = `https://corona-api.com/${land}`;
@@ -44,8 +47,6 @@ async function getCountriesCOVID(land){ //gets COVID info per country or contine
 }//getCountriesCOVID
 
 async function getCountries(){ //fetches countries names and regions and code and store them in array of objects
- const countryBaseEndpoint = 'https://restcountries.herokuapp.com/api/v1';
- const cors = 'https://api.codetabs.com/v1/proxy?quest=';
  const countriesFetchURL = `${cors}${countryBaseEndpoint}`
  try{
   const countriesData = await fetchAnyURL(countriesFetchURL);  
@@ -94,8 +95,8 @@ function diplayData(){
  continentsBtnsDiv = document.querySelector('.continentsBtnsDiv');
  try{
   continentsBtnsDiv.addEventListener('click', (e)=>{//continents
-   continentName ='';   
-   continentName = e.target.textContent;   
+   continentName ='';
+   continentName = e.target.textContent;
    let continent = continentName;
   const isContinent = wasSearchedContinent.includes(continent);//test if same continent was clicked twice
   if(isContinent){
