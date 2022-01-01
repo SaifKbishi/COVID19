@@ -17,12 +17,12 @@
 //function to create random Colors Array for the graph  
 //function to remove Data From Chart  (done by emptying the arraies before adjusting them to displayCharts function)
 
-#COVID-19 statistic webapp
+# COVID-19 statistic webapp
 
-In this app I have build a covid 19 statistic webapp.
-I have fetched data about the covid stats from https://about-corona.net/ api.
-I used this https://github.com/hengkiardo/restcountries api extract the list of countries per continent. 
-And used ChartJS from https://www.chartjs.org/ to display our data on graphs.
+//In this app I have build a covid 19 statistic webapp.
+//I have fetched data about the covid stats from https://about-corona.net/ api.
+//I used this https://github.com/hengkiardo/restcountries api extract the list of countries per continent. 
+//And used ChartJS from https://www.chartjs.org/ to display our data on graphs.
 
 
 1. We want the ability for the user to choose statistics between continents.
