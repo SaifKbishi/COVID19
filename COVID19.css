@@ -31,6 +31,7 @@ button{
 .chartArea{
  height: 70vh;
  position: relative;
+ min-width: 70%;
 }
 .CountriesButtons{
  margin: 3.3rem;
