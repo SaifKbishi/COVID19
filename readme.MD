@@ -3,15 +3,15 @@
 # COVID-19 statistic webapp
 
 In this app I have build a covid 19 statistic webapp.  
-I have fetched data about the covid stats from https://about-corona.net/ api.  
-I used this https://github.com/hengkiardo/restcountries api extract the list of countries per continent.  
+I have fetched data about the covid stats from https://about-corona.net/ **API**.  
+I used this https://github.com/hengkiardo/restcountries **API** extract the list of countries per continent.  
 And used ChartJS from https://www.chartjs.org/ to display our data on graphs.  
 
 
 I made the ability for the user to choose statistics between continents.  
-The challenge was that the covid api does not give us the ability to choose statistics between continent countries.  
+The challenge was that the covid **API** does not give us the ability to choose statistics between continent countries.  
 It only give me statistics of the whole world.
-So, i had to call the countries api and choose from their the specific continent I want the list of countries from and compare those countries to the covid 19 countries.  
+So, i had to call the countries **API** and choose from their the specific continent I want the list of countries from and compare those countries to the covid 19 countries.  
 
 The statistics I will display from each country is the following:
 - Confirmed Cases
